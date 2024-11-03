@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        registry = "health-status-api"
+        registry = "health-status-api" // Local Docker image name
     }
 
     stages {
@@ -18,7 +18,7 @@ pipeline {
         }
         stage("Run Tests") {
             steps {
-                sh "echo Running tests (placeholder)"
+                sh "echo Running tests placeholder" // Updated to avoid syntax errors
             }
         }
         stage("Build Docker Image") {
@@ -40,7 +40,13 @@ pipeline {
     post {
         always {
             script {
-                dockerImage.remove() // Clean up image after use
+                if (dockerImage != null) {
+                    try {
+                        dockerImage.remove() // Clean up image after use to free space
+                    } catch (Exception e) {
+                        echo "No Docker image to remove or failed to remove."
+                    }
+                }
             }
         }
     }
