@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        registry = "abhisheksamuel/health-status-api" // Replace with your Docker Hub username
+        registry = "health-status-api"
     }
 
     stages {
@@ -24,24 +24,14 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    // Build Docker image
+                    // Build Docker image locally
                     dockerImage = docker.build("$registry:${env.BUILD_ID}")
-                }
-            }
-        }
-        stage("Push Docker Image") {
-            steps {
-                script {
-                    // Push Docker image to Docker Hub
-                    docker.withRegistry("https://registry.hub.docker.com", "dockerhub-credentials") {
-                        dockerImage.push()
-                    }
                 }
             }
         }
         stage("Deploy Container") {
             steps {
-                // Run Docker container
+                // Run Docker container locally
                 sh "docker run -d -p 3000:3000 $registry:${env.BUILD_ID}"
             }
         }
